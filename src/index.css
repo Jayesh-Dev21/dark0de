@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-dark: #0A0506;
+    --bg-surface: #140708;
+    --panel-teal: #1B2A2F;
+    --accent-red: #FF4D4D;
+    --accent-red-glow: rgba(255, 77, 77, 0.4);
+    --accent-green: #7CFF00;
+    --accent-green-glow: rgba(124, 255, 0, 0.4);
+    --text-primary: #D6D6D6;
+    --text-muted: #8E8A8B;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: 'Orbitron', 'Rajdhani', sans-serif;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* Cyberpunk HUD Grid Background */
+.cyber-grid-bg {
+  background-color: #0A0506;
+  background-image: 
+    linear-gradient(to right, rgba(255, 77, 77, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 77, 77, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Subtle Scanline Overlay */
+.scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+}
+
+/* Chamfered (Cut) Corners */
+.chamfer-tr {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% 100%,
+    0 100%
+  );
+}
+
+.chamfer-card {
+  clip-path: polygon(
+    14px 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    14px 100%,
+    0 calc(100% - 14px),
+    0 14px
+  );
+}
+
+.chamfer-btn {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    10px 100%,
+    0 calc(100% - 10px)
+  );
+}
+
+/* Cyber Glows */
+.glow-red {
+  box-shadow: 0 0 15px rgba(255, 77, 77, 0.3), inset 0 0 15px rgba(255, 77, 77, 0.05);
+}
+
+.glow-red-lg {
+  box-shadow: 0 0 30px rgba(255, 77, 77, 0.4), inset 0 0 20px rgba(255, 77, 77, 0.1);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(124, 255, 0, 0.35), inset 0 0 15px rgba(124, 255, 0, 0.1);
+}
+
+.text-glow-red {
+  text-shadow: 0 0 8px rgba(255, 77, 77, 0.6);
+}
+
+.text-glow-green {
+  text-shadow: 0 0 8px rgba(124, 255, 0, 0.7);
+}
+
+/* Corner Bracket Accents */
+.hud-corner-brackets {
+  position: relative;
+}
+.hud-corner-brackets::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #FF4D4D;
+  border-left: 2px solid #FF4D4D;
+  pointer-events: none;
+}
+.hud-corner-brackets::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid #FF4D4D;
+  border-right: 2px solid #FF4D4D;
+  pointer-events: none;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cyber-cursor {
+  animation: blink 1s step-start infinite;
+}
+
+/* Subtle pulse for countdown final hour */
+@keyframes pulse-red {
+  0%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 12px #FF1A1A;
+  }
+  50% {
+    opacity: 0.75;
+    text-shadow: 0 0 4px #FF1A1A;
+  }
+}
+
+.pulse-final-hour {
+  animation: pulse-red 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-final-hour {
+    animation: none;
+    color: #FF1A1A;
+    text-shadow: 0 0 8px #FF1A1A;
+  }
+  .cyber-cursor {
+    animation: none;
+  }
+}

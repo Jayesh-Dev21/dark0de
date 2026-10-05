@@ -1,0 +1,6 @@
+{
+  "name": "dark0de CTF",
+  "description": "Futuristic cyberpunk HUD Capture The Flag platform for dark0de cybersecurity competition.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
