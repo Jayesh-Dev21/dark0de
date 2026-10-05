@@ -7,33 +7,14 @@ import { MONGODB_URI } from '../src/server/mongo.js';
 dotenv.config();
 
 const ADMIN_ACCOUNTS = [
-  { name: 'Govind Ragavan', email: 'govind.ragavan@itbhu.ac.in', username: 'govind', password: 'password123' },
+  { name: 'Govind Ragavan', email: 'govind.ragavan@itbhu.ac.in', username: 'govind', password: 'govind123..' },
+  { name: 'System Administrator', email: 'admin@itbhu.ac.in', username: 'admin', password: 'govind123..' },
   { name: 'Pranshu Kashyap', email: 'pranshu.kashyap@itbhu.ac.in', username: 'pranshu', password: 'password123' },
   { name: 'Amogh Anand', email: 'amogh.anand@itbhu.ac.in', username: 'amogh', password: 'password123' },
   { name: 'Vadyant', email: 'vadyant@itbhu.ac.in', username: 'vadyant', password: 'password123' },
   { name: 'Krishna', email: 'krishna@itbhu.ac.in', username: 'krishna', password: 'password123' },
   { name: 'Purushottaman', email: 'purushottaman@itbhu.ac.in', username: 'purushottaman', password: 'password123' },
   { name: 'Avishi', email: 'avishi@itbhu.ac.in', username: 'avishi', password: 'password123' },
-  { name: 'System Administrator', email: 'admin@itbhu.ac.in', username: 'admin', password: 'dark0de_admin_pass_change_me!' },
-];
-
-const DEFAULT_HINTS = [
-  {
-    label: 'hint 1',
-    clue: "The biometric login gateway processes input directly into the SQL query without parameter binding. Inspect the input authentication logic: try classical boolean bypass patterns (admin' OR 1=1--).",
-  },
-  {
-    label: 'hint 2',
-    clue: 'Examine the disassembled ELF binary. The stack canary check is disabled. Overflowing the 64-byte local buffer redirects instruction pointer execution to the internal secret routine at address 0x080484b4.',
-  },
-  {
-    label: 'hint 3',
-    clue: 'The intercepted cipher transmission was encrypted with a rolling XOR cipher using a repeating pseudo-random keystream. Analyze byte frequencies against expected ASCII syntax to reconstruct the decryption key.',
-  },
-  {
-    label: 'hint 4',
-    clue: 'Inspect the raw PCAP stream. Look for abnormal high-frequency TXT and sub-domain query packets directed to internal DNS servers containing base64 encoded payloads.',
-  },
 ];
 
 async function runSeed() {
@@ -48,7 +29,7 @@ async function runSeed() {
     process.exit(1);
   }
 
-  // 1. Seed All Admin Accounts
+  // 1. Seed & Update All Admin Accounts
   for (const adm of ADMIN_ACCOUNTS) {
     const adminHash = await bcrypt.hash(adm.password, 10);
     const existing = await User.findOne({
@@ -73,19 +54,7 @@ async function runSeed() {
     }
   }
 
-  // 2. Hints
-  for (const h of DEFAULT_HINTS) {
-    const existing = await Hint.findOne({ label: h.label });
-    if (!existing) {
-      await Hint.create({
-        label: h.label,
-        clue: h.clue,
-      });
-      console.log(`[dark0de Seed] [hints] Inserted: ${h.label}`);
-    }
-  }
-
-  console.log('[dark0de Seed] Active MongoDB collections updated.');
+  console.log('[dark0de Seed] Admin accounts successfully synchronized.');
   await mongoose.disconnect();
   console.log('[dark0de Seed] Complete.');
 }
