@@ -31,29 +31,6 @@ interface HintItem {
   createdAt?: string;
 }
 
-const DEFAULT_HINT_ITEMS: HintItem[] = [
-  {
-    id: 'hint_1',
-    label: 'hint 1',
-    clue: "The biometric login gateway processes input directly into the SQL query without parameter binding. Inspect the input authentication logic: try classical boolean bypass patterns (admin' OR 1=1--).",
-  },
-  {
-    id: 'hint_2',
-    label: 'hint 2',
-    clue: 'Examine the disassembled ELF binary. The stack canary check is disabled. Overflowing the 64-byte local buffer redirects instruction pointer execution to the internal secret routine at address 0x080484b4.',
-  },
-  {
-    id: 'hint_3',
-    label: 'hint 3',
-    clue: 'The intercepted cipher transmission was encrypted with a rolling XOR cipher using a repeating pseudo-random keystream. Analyze byte frequencies against expected ASCII syntax to reconstruct the decryption key.',
-  },
-  {
-    id: 'hint_4',
-    label: 'hint 4',
-    clue: 'Inspect the raw PCAP stream. Look for abnormal high-frequency TXT and sub-domain query packets directed to internal DNS servers containing base64 encoded payloads.',
-  },
-];
-
 export default function App() {
   const [bootCompleted, setBootCompleted] = useState<boolean>(() => {
     return sessionStorage.getItem('dark0de_boot_done') === 'true';
@@ -64,8 +41,8 @@ export default function App() {
   const [challenges, setChallenges] = useState<ChallengeData[]>([]);
   const [challengesLoading, setChallengesLoading] = useState<boolean>(false);
   const [showKnow, setShowKnow] = useState(false);
-  // Dynamic hints state from /api/hints with resilient fallback
-  const [hints, setHints] = useState<HintItem[]>(DEFAULT_HINT_ITEMS);
+  // Dynamic hints state from /api/hints (empty by default; no offline hints)
+  const [hints, setHints] = useState<HintItem[]>([]);
 
   // Single flag submission states (textarea)
   const [flagInput, setFlagInput] = useState('');
@@ -108,19 +85,19 @@ export default function App() {
     verifySession();
   }, [verifySession]);
 
-  // Load hints from /api/hints
+  // Load hints from /api/hints (direct from MongoDB)
   const fetchHints = useCallback(async () => {
     try {
       const res = await fetch('/api/hints');
       const contentType = res.headers.get('content-type');
       if (res.ok && contentType && contentType.includes('application/json')) {
         const data = await res.json();
-        if (Array.isArray(data.hints) && data.hints.length > 0) {
+        if (Array.isArray(data.hints)) {
           setHints(data.hints);
         }
       }
     } catch (err) {
-      // Retain existing default hints during dev server warmup or transient drops
+      // network error
     }
   }, []);
 
@@ -431,45 +408,53 @@ export default function App() {
 
             {/* 3. Long Boxes for Hints: Structure: "hint 1                                     ^" with restored chamfered border */}
             <div className="space-y-2.5">
-              {hints.map((hint) => {
-                const isOpen = expandedHints[hint.id];
+              {hints.length === 0 ? (
+                <div className="border border-[#FF4D4D]/25 bg-[#140708]/80 chamfer-card p-6 text-center">
+                  <p className="font-mono text-sm tracking-wider text-[#8E8A8B]">
+                    No hints Yet
+                  </p>
+                </div>
+              ) : (
+                hints.map((hint) => {
+                  const isOpen = expandedHints[hint.id];
 
-                return (
-                  <div
-                    key={hint.id}
-                    className="border border-[#FF4D4D]/50 bg-[#140708]/90 chamfer-card transition-all duration-200"
-                  >
-                    {/* Header Row: "hint 1                                             ^" */}
-                    <button
-                      type="button"
-                      onClick={() => toggleHint(hint.id)}
-                      className="w-full px-5 py-3.5 flex items-center justify-between text-left cursor-pointer hover:bg-[#FF4D4D]/5 transition-colors font-mono text-sm tracking-wide text-white capitalize"
+                  return (
+                    <div
+                      key={hint.id}
+                      className="border border-[#FF4D4D]/50 bg-[#140708]/90 chamfer-card transition-all duration-200"
                     >
-                      <span className="font-mono text-xs md:text-sm font-semibold tracking-wider text-[#D6D6D6]">
-                        {hint.label}
-                      </span>
+                      {/* Header Row: "hint 1                                             ^" */}
+                      <button
+                        type="button"
+                        onClick={() => toggleHint(hint.id)}
+                        className="w-full px-5 py-3.5 flex items-center justify-between text-left cursor-pointer hover:bg-[#FF4D4D]/5 transition-colors font-mono text-sm tracking-wide text-white capitalize"
+                      >
+                        <span className="font-mono text-xs md:text-sm font-semibold tracking-wider text-[#D6D6D6]">
+                          {hint.label}
+                        </span>
 
-                      <div className="text-[#8E8A8B]">
-                        {isOpen ? (
-                          <ChevronUp className="w-4 h-4 text-[#FF4D4D]" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4" />
-                        )}
-                      </div>
-                    </button>
-
-                    {/* Expandable Clue Content */}
-                    {isOpen && (
-                      <div className="px-5 pb-4 pt-1 border-t border-[#FF4D4D]/30">
-                        <div className="p-3 bg-[#0A0506] border border-[#FF4D4D]/40 chamfer-btn text-xs font-mono text-[#D6D6D6] leading-relaxed">
-                          <span className="text-[#FF4D4D] font-bold mr-2">&gt;&gt;</span>
-                          {hint.clue}
+                        <div className="text-[#8E8A8B]">
+                          {isOpen ? (
+                            <ChevronUp className="w-4 h-4 text-[#FF4D4D]" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
                         </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      </button>
+
+                      {/* Expandable Clue Content */}
+                      {isOpen && (
+                        <div className="px-5 pb-4 pt-1 border-t border-[#FF4D4D]/30">
+                          <div className="p-3 bg-[#0A0506] border border-[#FF4D4D]/40 chamfer-btn text-xs font-mono text-[#D6D6D6] leading-relaxed">
+                            <span className="text-[#FF4D4D] font-bold mr-2">&gt;&gt;</span>
+                            {hint.clue}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         )}
