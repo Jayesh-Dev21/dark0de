@@ -48,10 +48,9 @@ export const FIXED_CHALLENGES: FixedChallenge[] = [
       'Intercepted keystream transmission utilizes a repeating XOR mask. Reconstruct the keystream and decrypt the classified payload.',
     category: 'Network & Forensics',
     points: 400,
-    flagHash: '08c240fd20646e6f4a337ecb2639f6d17e43e9ca46f51270a9ef1a4f54e0cad6', // dark0de{x0r_k3ystr34m_br34k_auth3nt1c}
+    flagHash: '9ba8dbe1eb1d2338ee4c277bf68233eeb6b8e8f34985a430348f9949c5064587', // dark0de{SP3CTR0GR4M_M4G1C}
     acceptedHashes: [
-      '08c240fd20646e6f4a337ecb2639f6d17e43e9ca46f51270a9ef1a4f54e0cad6',
-      'ee59588669466e3ff5b4e782ff8f07fb08192a5491147a46abec2e8316d3f328',
+      '9ba8dbe1eb1d2338ee4c277bf68233eeb6b8e8f34985a430348f9949c5064587',
     ],
   },
   {

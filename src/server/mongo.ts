@@ -20,17 +20,25 @@ export const MONGODB_URI = resolveMongoURI();
 
 let cachedConn: typeof mongoose | null = null;
 
-export async function connectMongoDB(): Promise<typeof mongoose> {
+export async function connectMongoDB(): Promise<typeof mongoose | null> {
   if (cachedConn && mongoose.connection.readyState === 1) {
     return cachedConn;
   }
 
+  // Fail fast, do not hang requests when database is unreachable
+  mongoose.set('bufferCommands', false);
+
   const opts = {
     maxPoolSize: 10,
-    serverSelectionTimeoutMS: 10000,
+    serverSelectionTimeoutMS: 2000,
   };
 
-  cachedConn = await mongoose.connect(MONGODB_URI, opts);
-  console.log(`[dark0de] Connected to MongoDB Atlas (Database: ${cachedConn.connection.name})`);
-  return cachedConn;
+  try {
+    cachedConn = await mongoose.connect(MONGODB_URI, opts);
+    console.log(`[dark0de] Connected to MongoDB Atlas (Database: ${cachedConn.connection.name})`);
+    return cachedConn;
+  } catch (err: any) {
+    console.warn(`[dark0de] MongoDB Atlas connection unavailable (${err.message}). Using in-memory fallback store.`);
+    return null;
+  }
 }

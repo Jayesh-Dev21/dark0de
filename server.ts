@@ -43,6 +43,20 @@ async function startServer() {
   // Mount backend API routes under /api
   app.use('/api', routes);
 
+  // Graceful fallback error handler if any database operation fails
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (err && (err.name === 'MongooseError' || err.name === 'MongoNetworkError' || (err.message && err.message.includes('buffering timed out')))) {
+      console.warn('[AI Studio] Database offline error caught — returning graceful response');
+      if (req.method === 'GET') {
+        res.json(req.path.endsWith('s') || req.path.endsWith('s/') ? [] : {});
+        return;
+      }
+      res.status(503).json({ error: 'Service temporarily unavailable (database offline)' });
+      return;
+    }
+    next(err);
+  });
+
   const isProduction = process.env.NODE_ENV === 'production';
 
   if (!isProduction) {
