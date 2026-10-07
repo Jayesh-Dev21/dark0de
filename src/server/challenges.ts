@@ -59,10 +59,9 @@ export const FIXED_CHALLENGES: FixedChallenge[] = [
       'Packet capture stream indicates unauthorized data exfiltration over DNS tunnels. Reassemble exfiltrated payload chunks.',
     category: 'OSINT & Intelligence',
     points: 500,
-    flagHash: '8814cd4611f0c47e4fdfbebf03112bce436cd85ed0ccef332e7eb2a16264e6c9', // dark0de{p4ck3t_sn1ff3r_pwn3d_404}
+    flagHash: 'da3c36ae9e4e8a24678c11c34cd4b7cbd59a777aa833a69fb0a001dc45a15caa', // dark0de{w0wi333_100k_4t_yOu_t0uch1n9_gr4$$!}
     acceptedHashes: [
-      '8814cd4611f0c47e4fdfbebf03112bce436cd85ed0ccef332e7eb2a16264e6c9',
-      'c6d2c80c05fe98c430e1236f0aa679c1bb251f28b2be726487e4ee0ba00a94b4',
+      'da3c36ae9e4e8a24678c11c34cd4b7cbd59a777aa833a69fb0a001dc45a15caa',
     ],
   },
 ];
