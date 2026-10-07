@@ -22,10 +22,9 @@ export const FIXED_CHALLENGES: FixedChallenge[] = [
       'Biometric authentication gateway exposed to prompt injection. Bypass user verification to extract root session privileges.',
     category: 'LLM & AI Security',
     points: 100,
-    flagHash: 'b2f0a393e62b10e8e25e5a85910b9ea989f7850bc86ab9f1f9cc8c2dbe804844', // dark0de{sql_1nj3ct10n_byp4ss_succ3ss}
+    flagHash: '97435541901be9be4522039a6c3937552bfd6fac2064ad42d31d88569e36e37f', // dark0de{h4rb0r_n1ght_sh1ft_c4ch3_f0und}
     acceptedHashes: [
-      'b2f0a393e62b10e8e25e5a85910b9ea989f7850bc86ab9f1f9cc8c2dbe804844',
-      'b4bfa255b746fce475306ec040f7f32997184d0dfec472e3895e6912386bbab4',
+      '97435541901be9be4522039a6c3937552bfd6fac2064ad42d31d88569e36e37f',
     ],
   },
   {
