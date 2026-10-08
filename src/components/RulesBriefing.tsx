@@ -38,7 +38,7 @@ export const RulesBriefing: React.FC = () => {
         <div className="border border-[#FF4D4D]/30 bg-[#140708]/90 p-5 chamfer-card space-y-3">
           <div className="flex items-center gap-2 text-[#FF4D4D] font-bold text-sm">
             <Clock className="w-4 h-4" />
-            <span>02. 24-HOUR ENGAGEMENT WINDOW</span>
+            <span>02. 48-HOUR ENGAGEMENT WINDOW</span>
           </div>
           <p className="text-[#D6D6D6] leading-relaxed">
             The competition operates on a continuous 24-hour authoritative countdown anchored directly to the security gateway.
