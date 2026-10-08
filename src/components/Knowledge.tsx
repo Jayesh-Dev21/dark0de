@@ -7,6 +7,11 @@ interface Topic {
   title: string;
   short: string;
   what: string;
+  image?: {
+    src: string;
+    alt: string;
+    caption?: string;
+  };
   exampleTitle: string;
   example: string[];
   fact: string;
@@ -58,6 +63,10 @@ const TOPICS: Topic[] = [
     short: 'Detective work with public info',
     what:
       'Open Source Intelligence means finding facts using only information that is already public: websites, photos, maps and social posts. No hacking is involved, just careful searching.',
+    image: {
+      src: '/osint_photo.jpg',
+      alt: 'OSINT geolocation challenge photo',
+    },
     exampleTitle: 'Example: where was this photo taken?',
     example: [
       'The photo shows a shop sign, a bridge and a mountain.',
@@ -142,6 +151,19 @@ export const KnowPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           </div>
 
           <p className="text-sm text-[#D6D6D6] leading-relaxed">{t.what}</p>
+
+          {t.image && (
+            <div className="border border-[#FF4D4D]/40 bg-[#0A0506] p-2 chamfer-card max-w-[80%] mx-auto">
+              <div className="relative overflow-hidden w-full bg-black/80 flex items-center justify-center">
+                <img
+                  src={t.image.src}
+                  alt={t.image.alt}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-auto max-h-[304px] object-cover sm:object-contain rounded-none border border-[#FF4D4D]/20 shadow-[0_0_15px_rgba(255,77,77,0.15)]"
+                />
+              </div>
+            </div>
+          )}
 
           <div>
             <div className="text-sm text-[#FF4D4D] font-bold mb-1.5">{t.exampleTitle}</div>
