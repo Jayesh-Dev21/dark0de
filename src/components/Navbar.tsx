@@ -35,9 +35,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {/* Left: Brand Wordmark + Logo */}
         <div className="flex items-center gap-2">
           <img
-            src="/favicon-icon.png"
+            src="/dark0de_logo.jpg"
             alt="dark0de logo"
-            className="h-7 w-7 md:h-9 md:w-9 object-contain"
+            className="h-8 w-8 md:h-9 md:w-9 rounded-full object-cover border border-[#FF4D4D]/40"
           />
           <div className="text-xl md:text-2xl font-heading font-black tracking-widest text-[#FF4D4D] text-glow-red">
             dark0de

@@ -10,6 +10,7 @@ import {
   Clock,
   FileText,
   CheckCircle2,
+  Trash2,
 } from 'lucide-react';
 
 interface ParticipantScore {
@@ -313,6 +314,37 @@ export const AdminScoreboard: React.FC = () => {
     }
   };
 
+  const handleDeleteHint = async (hintId: string, hintLabel: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete ${hintLabel} from database?`)) return;
+
+    try {
+      const token = localStorage.getItem('dark0de_token');
+      const headers: Record<string, string> = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch(`/api/hints/${encodeURIComponent(hintId)}`, {
+        method: 'DELETE',
+        headers,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.hints) {
+          setHints(data.hints);
+        } else {
+          setHints((prev) => prev.filter((h) => h.id !== hintId));
+        }
+      } else {
+        setHints((prev) => prev.filter((h) => h.id !== hintId));
+      }
+      setHintSuccess(`Removed ${hintLabel} from database.`);
+      setTimeout(() => setHintSuccess(null), 3000);
+    } catch {
+      setHints((prev) => prev.filter((h) => h.id !== hintId));
+    }
+  };
+
   const openParticipantDetail = async (userId: string) => {
     setSelectedUserId(userId);
     setDetailLoading(true);
@@ -549,23 +581,33 @@ export const AdminScoreboard: React.FC = () => {
                   className="border border-[#FF4D4D]/50 bg-[#140708]/90 chamfer-card transition-all duration-200"
                 >
                   {/* Header Row: "hint 1                                             ^" */}
-                  <button
-                    type="button"
-                    onClick={() => toggleHint(hint.id)}
-                    className="w-full px-5 py-3.5 flex items-center justify-between text-left cursor-pointer hover:bg-[#FF4D4D]/5 transition-colors font-mono text-sm tracking-wide text-white capitalize"
-                  >
-                    <span className="font-mono text-xs md:text-sm font-semibold tracking-wider text-[#D6D6D6]">
-                      {hint.label}
-                    </span>
+                  <div className="w-full px-5 py-3.5 flex items-center justify-between text-left font-mono text-sm tracking-wide text-white capitalize">
+                    <button
+                      type="button"
+                      onClick={() => toggleHint(hint.id)}
+                      className="flex-1 flex items-center justify-between cursor-pointer hover:text-[#FF4D4D] transition-colors pr-3"
+                    >
+                      <span className="font-mono text-xs md:text-sm font-semibold tracking-wider text-[#D6D6D6]">
+                        {hint.label}
+                      </span>
+                      <div className="text-[#8E8A8B]">
+                        {isOpen ? (
+                          <ChevronUp className="w-4 h-4 text-[#FF4D4D]" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        )}
+                      </div>
+                    </button>
 
-                    <div className="text-[#8E8A8B]">
-                      {isOpen ? (
-                        <ChevronUp className="w-4 h-4 text-[#FF4D4D]" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4" />
-                      )}
-                    </div>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteHint(hint.id, hint.label, e)}
+                      title="Delete hint from database"
+                      className="p-1 text-[#8E8A8B] hover:text-[#FF4D4D] hover:bg-[#FF4D4D]/10 rounded transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
 
                   {/* Expandable Clue Content */}
                   {isOpen && (

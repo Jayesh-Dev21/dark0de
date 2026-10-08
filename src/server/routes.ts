@@ -23,6 +23,7 @@ import {
   getAllHints,
   countHints,
   createHint,
+  deleteHint,
 } from './store.js';
 
 const router = express.Router();
@@ -286,6 +287,31 @@ router.post('/hints', requireAdmin, async (req: AuthenticatedRequest, res: Respo
   } catch (err: any) {
     console.error('Add hint error:', err);
     res.status(500).json({ error: 'Failed to broadcast hint' });
+  }
+});
+
+// DELETE /api/hints/:id - remove a hint (admin only)
+router.delete('/hints/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: 'Hint id is required' });
+      return;
+    }
+    await deleteHint(id);
+    const allHints = await getAllHints();
+    res.json({
+      message: 'Hint deleted',
+      hints: allHints.map((h) => ({
+        id: h.id,
+        label: h.label,
+        clue: h.clue,
+        createdAt: h.createdAt,
+      })),
+    });
+  } catch (err: any) {
+    console.error('Delete hint error:', err);
+    res.status(500).json({ error: 'Failed to delete hint' });
   }
 });
 

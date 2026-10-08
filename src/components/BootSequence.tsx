@@ -48,7 +48,7 @@ clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 
 @keyframes bs-flick{50%{opacity:.82}}
 `;
 
-export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete, logoSrc = '/apple-touch-icon.png' }) => {
+export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete, logoSrc = '/dark0de_logo.jpg' }) => {
   const fillRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // Keep the latest callback in a ref so a new function from the parent never restarts the boot.

@@ -34,10 +34,9 @@ export const FIXED_CHALLENGES: FixedChallenge[] = [
       'Stack frame boundary analysis reveals an unprotected return instruction pointer. Hijack execution flow to reach target flag function.',
     category: 'Binary & Cryptanalysis',
     points: 250,
-    flagHash: '5b28aff65eb52172f1e3a8c69f9d2cf1ad331756054b67773c8f84e0b9ec6aa0', // dark0de{st4ck_0v3rfl0w_sh3llc0d3_3xpl01t}
+    flagHash: '53d4fd8a0cfdcd898669ad0a3ffecb8516fc74c1d846c13f9427410c02b0fd33', // dark0de{r3ad_th3_b00k_th4t_d03snt_3x1st}
     acceptedHashes: [
-      '5b28aff65eb52172f1e3a8c69f9d2cf1ad331756054b67773c8f84e0b9ec6aa0',
-      '7a77e8a93aaae5f1ae3863483b3e64f77cba72f0c7ea519965ba48da2fe0b889',
+      '53d4fd8a0cfdcd898669ad0a3ffecb8516fc74c1d846c13f9427410c02b0fd33',
     ],
   },
   {

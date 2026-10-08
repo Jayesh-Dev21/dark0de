@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { User, Solve, Hint } from './models.js';
+import { connectMongoDB } from './mongo.js';
 
 export interface DataUser {
   id: string;
@@ -40,20 +41,8 @@ const initialAdmins = [
 
 const memoryUsers: Map<string, DataUser> = new Map();
 const memorySolves: DataSolve[] = [];
-const memoryHints: DataHint[] = [
-  {
-    id: 'hint_seed_1',
-    label: 'hint 1',
-    clue: 'Examine the prompt structure carefully — LLM instructions can be countermanded with higher system precedence commands.',
-    createdAt: new Date(Date.now() - 3600000),
-  },
-  {
-    id: 'hint_seed_2',
-    label: 'hint 2',
-    clue: 'Look into the XOR keystream repetition length to uncover the underlying plain text.',
-    createdAt: new Date(Date.now() - 1800000),
-  },
-];
+// Hints depend completely on MongoDB database (no static seeds)
+const memoryHints: DataHint[] = [];
 
 // Initialize default memory admins and demo participant
 for (const adm of initialAdmins) {
@@ -82,6 +71,16 @@ memoryUsers.set('usr_player', {
 
 export function isDbConnected(): boolean {
   return mongoose.connection.readyState === 1;
+}
+
+export async function ensureDbConnection(): Promise<boolean> {
+  if (isDbConnected()) return true;
+  try {
+    await connectMongoDB();
+    return isDbConnected();
+  } catch {
+    return false;
+  }
 }
 
 export async function findUserByUsernameOrEmail(identifier: string): Promise<DataUser | null> {
@@ -285,6 +284,8 @@ export async function getAllParticipants(): Promise<DataUser[]> {
 }
 
 export async function getAllHints(): Promise<DataHint[]> {
+  await ensureDbConnection();
+
   if (isDbConnected()) {
     try {
       const dbHints = await Hint.find().sort({ createdAt: 1 }).lean();
@@ -295,25 +296,30 @@ export async function getAllHints(): Promise<DataHint[]> {
         createdAt: h.createdAt,
       }));
     } catch (err) {
-      console.warn('[store] DB getAllHints error, falling back to memory:', err);
+      console.error('[store] DB getAllHints error:', err);
     }
   }
 
+  // Purely dynamic memory store (no static hardcoded hints)
   return [...memoryHints].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 }
 
 export async function countHints(): Promise<number> {
+  await ensureDbConnection();
+
   if (isDbConnected()) {
     try {
       return await Hint.countDocuments();
     } catch (err) {
-      console.warn('[store] DB countHints error, falling back to memory:', err);
+      console.error('[store] DB countHints error:', err);
     }
   }
   return memoryHints.length;
 }
 
 export async function createHint(label: string, clue: string): Promise<DataHint> {
+  await ensureDbConnection();
+
   if (isDbConnected()) {
     try {
       const doc = await Hint.create({ label, clue });
@@ -324,7 +330,7 @@ export async function createHint(label: string, clue: string): Promise<DataHint>
         createdAt: doc.createdAt,
       };
     } catch (err) {
-      console.warn('[store] DB createHint error, saving to memory:', err);
+      console.error('[store] DB createHint error:', err);
     }
   }
 
@@ -336,4 +342,29 @@ export async function createHint(label: string, clue: string): Promise<DataHint>
   };
   memoryHints.push(newHint);
   return newHint;
+}
+
+export async function deleteHint(id: string): Promise<boolean> {
+  await ensureDbConnection();
+
+  if (isDbConnected()) {
+    try {
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        const res = await Hint.findByIdAndDelete(id);
+        if (res) return true;
+      } else {
+        const res = await Hint.deleteOne({ _id: id });
+        if (res.deletedCount > 0) return true;
+      }
+    } catch (err) {
+      console.error('[store] DB deleteHint error:', err);
+    }
+  }
+
+  const idx = memoryHints.findIndex((h) => h.id === id);
+  if (idx !== -1) {
+    memoryHints.splice(idx, 1);
+    return true;
+  }
+  return false;
 }

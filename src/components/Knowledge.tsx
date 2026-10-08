@@ -120,7 +120,7 @@ export const KnowPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </h1>
         <p className="text-sm text-[#D6D6D6] mt-2 leading-relaxed">
           New to CTFs? Here is a simple guide to the kinds of challenges you may
-          meet. Each one comes with a simple example.For more info visit <a href="https://discord.gg/eehjvuAy2" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#00E5FF]">#Resources</a> in the discord.
+          meet. Each one comes with a simple example.For more info visit <a href="https://discord.gg/eehjvuAy2" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#FF4D4D]">#Resources</a> in the discord.
         </p>
       </div>
 
